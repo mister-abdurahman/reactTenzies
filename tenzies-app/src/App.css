@@ -1,0 +1,9 @@
+body {
+  background-color: darkblue;
+}
+.container {
+  /* width: 500px; */
+  height: 80vh;
+  margin: 100px;
+  background-color: white;
+}
