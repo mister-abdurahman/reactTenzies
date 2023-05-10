@@ -58,3 +58,13 @@ main {
 .roll-dice-btn:active {
   box-shadow: inset 5px 5px 10px -3px rgba(0, 0, 0, 0.7);
 }
+.title {
+  font-size: 60px;
+  margin: 0;
+  font-weight: 700;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.instructions {
+  margin-top: 0;
+  font-size: 20px;
+}
