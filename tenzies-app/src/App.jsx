@@ -8,6 +8,14 @@ function App() {
 
   const [tenzies, setTenzies] = useState(false);
 
+  const [rollTimes, setRollTimes] = useState(0);
+
+  useEffect(() => {
+    setRollTimes((prev) => {
+      return prev + 1;
+    });
+  }, [dice]);
+
   useEffect(() => {
     const allHeld = dice.every((die) => die.isHeld);
     const firstValue = dice[0].value;
