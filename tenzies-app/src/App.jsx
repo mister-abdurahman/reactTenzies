@@ -10,22 +10,47 @@ function App() {
 
   const [rollTimes, setRollTimes] = useState(0);
 
-  const [time, setTime] = useState(0)
- 
- let interval;
+  const [time, setTime] = useState(0);
 
- function theCounter(){
-  setTime((prev)=> prev + 1)
- }
-//  put startCount fn in a use effect to make it run only once.
- function startCount(){
-  clearInterval(interval)
-  interval = setInterval(theCounter, 1000)
- }
- function stopCount(){
- clearInterval(interval)
- setTime(0)
- }
+  const [bestRoll, setBestRoll] = useState(100);
+
+  let interval;
+  let startTheTimer = true;
+
+  function theCounter() {
+    setTime((prev) => prev + 1);
+  }
+  //  put startCount fn in a use effect to make it run only once.
+  function startCount() {
+    if (!startTheTimer) return;
+    interval = setInterval(theCounter, 4000);
+  }
+  function stopCount() {
+    clearInterval(interval);
+    setTime(0);
+    startTheTimer = false;
+  }
+
+  // useEffect(() => {
+  //   startTheTimer && startCount();
+  // }, []);
+
+  useEffect(() => {
+    stopCount();
+  }, [startTheTimer]);
+
+  useEffect(() => {
+    if (tenzies) {
+      setBestRoll((prev) => {
+        if (prev > rollTimes) {
+          localStorage.setItem("best-roll", JSON.stringify(rollTimes));
+          return (prev = rollTimes);
+        } else {
+          return prev;
+        }
+      });
+    }
+  }, [tenzies]);
 
   useEffect(() => {
     const allHeld = dice.every((die) => die.isHeld);
@@ -58,7 +83,6 @@ function App() {
     };
   }
 
-
   function allNewDice() {
     const newDice = [];
     for (let x = 0; x < 10; x++) {
@@ -68,7 +92,7 @@ function App() {
   }
 
   function rollDice() {
-    // startCount()
+    startCount();
     if (!tenzies) {
       setRollTimes((prev) => {
         return prev + 1;
@@ -79,13 +103,13 @@ function App() {
         })
       );
     } else {
-      setRollTimes(0)
+      setRollTimes(0);
       setDice(allNewDice());
       setTenzies(false);
+      stopCount();
     }
   }
   function holdDice(id) {
-    clearInterval(updateTestTimer)
     setDice((prevData) =>
       prevData.map((el) => {
         return el.id === id ? { ...el, isHeld: !el.isHeld } : el;
@@ -106,8 +130,21 @@ function App() {
         current value between rolls.
       </p>
       <div className="flex-this">
-      <div className="num-rolls">Rolls: {rollTimes}</div>
-      <div className="num-rolls">Time: {time}</div>
+        <div className="num-rolls">Rolls: {rollTimes}</div>
+        <div className="num-rolls">Time: {time}s</div>
+        <div className="num-rolls">
+          {/* Best Roll is {bestRoll !== 100 && bestRoll} */}
+          Best Roll is{" "}
+          {bestRoll !== 100 && JSON.parse(localStorage.getItem("best-roll"))}
+          {/* {tenzies &&
+            ((prev) => {
+              if (prev > rollTimes) {
+                return (prev = rollTimes);
+              } else {
+                return prev;
+              }
+            })} */}
+        </div>
       </div>
       <div className="box-container">{diceElements}</div>
       <button className="roll-dice-btn" onClick={rollDice}>
