@@ -14,30 +14,35 @@ function App() {
 
   const [bestRoll, setBestRoll] = useState(100);
 
-  let interval;
-  let startTheTimer = true;
+  // let interval;
+  // let startTheTimer = true;
 
   function theCounter() {
     setTime((prev) => prev + 1);
   }
   //  put startCount fn in a use effect to make it run only once.
-  function startCount() {
-    if (!startTheTimer) return;
-    interval = setInterval(theCounter, 4000);
-  }
-  function stopCount() {
-    clearInterval(interval);
-    setTime(0);
-    startTheTimer = false;
-  }
-
-  // useEffect(() => {
-  //   startTheTimer && startCount();
-  // }, []);
+  // function startCount() {
+  //   if (!startTheTimer) return;
+  //   interval = setInterval(theCounter, 4000);
+  // }
+  // function stopCount() {
+  //   clearInterval(interval);
+  //   setTime(0);
+  //   startTheTimer = false;
+  // }
 
   useEffect(() => {
-    stopCount();
-  }, [startTheTimer]);
+    // startTheTimer && startCount();
+    const interval = setInterval(theCounter, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [rollTimes, tenzies]);
+
+  // useEffect(() => {
+  //   stopCount();
+  // }, [startTheTimer]);
 
   useEffect(() => {
     if (tenzies) {
@@ -49,6 +54,7 @@ function App() {
           return prev;
         }
       });
+      setTime(0);
     }
   }, [tenzies]);
 
@@ -92,7 +98,7 @@ function App() {
   }
 
   function rollDice() {
-    startCount();
+    // startCount();
     if (!tenzies) {
       setRollTimes((prev) => {
         return prev + 1;
@@ -116,10 +122,12 @@ function App() {
       })
     );
   }
-  // function resetGame() {
-  //   setDice(allNewDice());
-  //   setTenzies(false);
-  // }
+  function restartGame() {
+    setDice(allNewDice());
+    setTenzies(false);
+    setRollTimes(0);
+    setTime(0);
+  }
 
   return (
     <main>
@@ -147,9 +155,14 @@ function App() {
         </div>
       </div>
       <div className="box-container">{diceElements}</div>
-      <button className="roll-dice-btn" onClick={rollDice}>
-        {tenzies ? "New Game" : "Roll Dice"}
-      </button>
+      <div className="flex-this">
+        <button className="roll-dice-btn" onClick={rollDice}>
+          {tenzies ? "New Game" : "Roll Dice"}
+        </button>
+        <button className="roll-dice-btn" onClick={restartGame}>
+          Restart
+        </button>
+      </div>
     </main>
   );
 }
